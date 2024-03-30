@@ -1,5 +1,5 @@
 
-import mongoose from "mongoose";
+import mongoose, { Schema } from "mongoose";
 
 const movieSchema = new mongoose.Schema({
     name: {
@@ -15,8 +15,13 @@ const movieSchema = new mongoose.Schema({
     cast: {
         type: String,
     },
-    genre: {
+    genres: {
         type: String,
+    },
+    category: {
+        type: Schema.Types.ObjectId,
+        ref: "Categories",
+        require: true
     },
     runingTime: {
         type: Number,
@@ -28,6 +33,9 @@ const movieSchema = new mongoose.Schema({
         type: Number,
     },
     trailer: {
+        type: String,
+    },
+    imgBanner: {
         type: String,
     }
 },

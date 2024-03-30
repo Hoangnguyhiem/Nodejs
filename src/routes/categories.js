@@ -1,7 +1,7 @@
-import express from "express";
-import { addCategories, deleteCategories, getCategories, getCategoriesDetail, updateCategories } from "../controllers/categories.js";
+import { Router } from "express";
+import { addCategories, deleteCategories, getCategories, getCategoriesDetail, updateCategories } from "../controllers/categories";
 
-const categoriesRouter = express.Router()
+const categoriesRouter = Router()
 
 categoriesRouter.get("/" , getCategories)
 categoriesRouter.post("/" , addCategories)
