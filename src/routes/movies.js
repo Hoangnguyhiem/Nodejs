@@ -6,9 +6,9 @@ import {checkPermisson} from "../checkPermisson/checkPermisson";
 const moviesRouter = Router()
 
 moviesRouter.get("/" , getMovies)
-moviesRouter.post("/" , addMovies)
+moviesRouter.post("/" ,checkPermisson, addMovies)
 moviesRouter.get("/:id" , getMoviesDetail)
-moviesRouter.put("/:id" , updateMovies)
+moviesRouter.put("/:id" ,checkPermisson, updateMovies)
 moviesRouter.delete("/:id" ,checkPermisson, deleteMovies)
 
 export default moviesRouter;
