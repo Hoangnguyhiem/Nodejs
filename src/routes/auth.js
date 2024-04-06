@@ -1,10 +1,11 @@
 import { Router } from "express";
-import { Signin, Signup } from "../controllers/auth";
+import AuthController from "../controllers/auth";
 
+const authRouter = Router();
 
-const userSchema = Router();
+const authController = new AuthController();
 
-userSchema.post("/signup", Signup)
-userSchema.post("/signin", Signin)
+authRouter.post("/login", authController.login);
+authRouter.post("/register", authController.register);
 
-export default userSchema
+export default authRouter;

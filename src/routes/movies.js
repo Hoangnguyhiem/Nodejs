@@ -1,14 +1,15 @@
 import { Router } from "express";
-import { addMovies, deleteMovies, getMovies, getMoviesDetail, updateMovies } from "../controllers/movies";
-import {checkPermisson} from "../checkPermisson/checkPermisson";
+import MoviesController from "../controllers/movies";
+import { checkPermission } from "../middlewares/checkPermision";
 
+const moviesRouter = Router();
 
-const moviesRouter = Router()
+const moviesController = new MoviesController();
 
-moviesRouter.get("/" , getMovies)
-moviesRouter.post("/" ,checkPermisson, addMovies)
-moviesRouter.get("/:id" , getMoviesDetail)
-moviesRouter.put("/:id" ,checkPermisson, updateMovies)
-moviesRouter.delete("/:id" ,checkPermisson, deleteMovies)
+moviesRouter.get("/", moviesController.getAllMovies);
+moviesRouter.post("/", moviesController.createMovie);
+moviesRouter.get("/:id", moviesController.getMovieDetail);
+moviesRouter.put("/:id", moviesController.updateMovie);
+moviesRouter.delete("/:id", moviesController.deleteMovie);
 
 export default moviesRouter;

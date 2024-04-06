@@ -1,13 +1,15 @@
 import { Router } from "express";
-import { addGenre, deleteGenre, getAllGenres, getGenreDetail, updateGenre } from "../controllers/genres";
+import GenresController from "../controllers/genres";
+import { checkPermission } from "../middlewares/checkPermision";
 
+const genresRouter = Router();
 
-const genreRouter = Router();
+const genresController = new GenresController();
 
-genreRouter.get("/", getAllGenres)
-genreRouter.get("/:id", getGenreDetail)
-genreRouter.post("/", addGenre)
-genreRouter.put("/:id", updateGenre)
-genreRouter.delete("/:id", deleteGenre)
+genresRouter.get("/", genresController.getAllGenres);
+genresRouter.get("/:id", genresController.getGenreDetail);
+genresRouter.post("/", genresController.createGenre);
+genresRouter.put("/:id", genresController.updateGenre);
+genresRouter.delete("/:id", genresController.deleteGenre);
 
-export default genreRouter;
+export default genresRouter;

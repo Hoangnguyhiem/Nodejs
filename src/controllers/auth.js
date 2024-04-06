@@ -1,68 +1,80 @@
-import Users from "../models/user"
-import { registerSchema } from "../schema/auth";
-import bcryptjs from "bcryptjs"
-import jwt from "jsonwebtoken"
+import bcryptjs from "bcryptjs";
+import jwt from "jsonwebtoken";
+import { StatusCodes } from "http-status-codes";
+import User from "../models/UserModel";
+import { registerValidator, loginValidator } from "../validations/auth";
+import ApiError from "../utils/ApiError";
 
-
-export const Signup = async (req, res) => {
+class AuthController {
+  async register(req, res, next) {
     try {
-        const { username, email, password } = req.body
-        const { error } = registerSchema.validate(req.body, { abortEarly: false })
-
-        if (error) {
-            const messages = error.details.map((message) => message.message)
-            return res.status(400).json({ messages })
-        }
-
-        const data = await Users.findOne({ email });
-        if (data) {
-            return res.status(400).json({
-                message: "Email da ton tai",
-            })
-        }
-
-        const hashedPassword = await bcryptjs.hash(password, 10)
-        const user = await Users.create({
-            username,
-            email,
-            password: hashedPassword
-        })
-
-        res.status(200).json({...user.toObject(), password: undefined})
+      //B1: validate: email, password, username
+      const { email, username, avatar, password } = req.body;
+      const { error } = registerValidator.validate(req.body);
+      if (error) {
+        const errors = error.details.map((err) => err.message).join(", ");
+        throw new ApiError(StatusCodes.BAD_REQUEST, errors);
+      }
+      // b2: validate email exitsing
+      const emailExist = await User.findOne({ email });
+      if (emailExist)
+        throw new ApiError(StatusCodes.BAD_REQUEST, "Email da duoc dang ky");
+      // b3 ma hoa password
+      const hashPassword = await bcryptjs.hash(password, 10);
+      // update db
+      const user = await User.create({
+        email,
+        username,
+        avatar,
+        password: hashPassword,
+      });
+      // b4 remove password in res
+      res.status(StatusCodes.OK).json({
+        message: "Create Done",
+        data: { ...user.toObject(), password: undefined },
+      });
     } catch (error) {
-        res.status(400).json({message: error.message})
+      next(error);
     }
+  }
+
+  // POST: auth/login: email, password
+  async login(req, res, next) {
+    try {
+      const { email, password } = req.body;
+      //B1: validate: email, password
+      const { error } = loginValidator.validate(req.body);
+      if (error) {
+        const errors = error.details.map((err) => err.message).join(", ");
+        throw new ApiError(StatusCodes.BAD_REQUEST, errors);
+      }
+      // check email xem co trong db
+      const checkUser = await User.findOne({ email });
+      if (!checkUser)
+        throw new ApiError(StatusCodes.BAD_REQUEST, "Tai khoan ko hop le");
+
+      // so sanh password: bcryptjs
+      const checkPassword = await bcryptjs.compare(
+        password,
+        checkUser.password
+      );
+      if (!checkPassword)
+        throw new ApiError(StatusCodes.BAD_REQUEST, "Tai khoan ko hop le");
+
+      // ma hoa token
+      const token = jwt.sign({ id: checkUser._id }, process.env.SECRET_KEY, {
+        expiresIn: "1d",
+      });
+      // res
+      res.status(StatusCodes.OK).json({
+        message: "Login ok",
+        user: { ...checkUser.toObject(), password: undefined },
+        token,
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
 }
 
-export const Signin = async (req, res) => {
-    try {
-        const {email, password} = req.body;
-
-        const data = await Users.findOne({email})
-
-        if(!data) {
-            return res.status(404).json({
-                message: "Tai khoan khong hop le",
-            })
-        }
-
-        const checkPassword = await bcryptjs.compare(password , data.password);
-
-        if(!checkPassword) {
-            return res.status(404).json({
-                message : "Not Found",
-            })
-        }
-
-        const token = jwt.sign({id:data._id}, "key", {expiresIn: "1h"});
-
-        res.status(200).json({
-           user: {...data.toObject() ,password: undefined},token
-        })
-        
-    } catch (error) {
-        res.status(400).json({
-            message: error.message,
-        })
-    }
-}
+export default AuthController;

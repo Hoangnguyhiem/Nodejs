@@ -1,12 +1,29 @@
 import { Router } from "express";
-import { addCategories, deleteCategories, getCategories, getCategoriesDetail, updateCategories } from "../controllers/categories";
+import CategoriesController from "../controllers/categories";
+import { uploadImage } from "../config/cloudinaryConfig";
+import { checkPermission } from "../middlewares/checkPermision";
 
-const categoriesRouter = Router()
+const categoriesRouter = Router();
 
-categoriesRouter.get("/" , getCategories)
-categoriesRouter.post("/" , addCategories)
-categoriesRouter.get("/:id" , getCategoriesDetail)
-categoriesRouter.put("/:id" , updateCategories)
-categoriesRouter.delete("/:id" , deleteCategories)
+const categoriesController = new CategoriesController();
+
+categoriesRouter.get("/", categoriesController.getAllCategories);
+categoriesRouter.get("/:id", categoriesController.getCategoryDetail);
+categoriesRouter.post(
+  "/",
+ 
+  uploadImage.single("image"),
+  categoriesController.createCategory
+);
+categoriesRouter.put(
+  "/:id",
+
+  categoriesController.updateCategory
+);
+categoriesRouter.delete(
+  "/:id",
+
+  categoriesController.deleteCategory
+);
 
 export default categoriesRouter;
