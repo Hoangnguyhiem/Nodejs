@@ -1,7 +1,7 @@
 import { Router } from "express";
-import CategoriesController from "../controllers/categories";
-import { uploadImage } from "../config/cloudinaryConfig";
-import { checkPermission } from "../middlewares/checkPermision";
+import CategoriesController from "../controllers/categories.js";
+import { uploadImage } from "../config/cloudinaryConfig.js";
+import { checkPermission } from "../middlewares/checkPermision.js";
 
 const categoriesRouter = Router();
 
@@ -11,18 +11,18 @@ categoriesRouter.get("/", categoriesController.getAllCategories);
 categoriesRouter.get("/:id", categoriesController.getCategoryDetail);
 categoriesRouter.post(
   "/",
- 
+  checkPermission,
   uploadImage.single("image"),
   categoriesController.createCategory
 );
 categoriesRouter.put(
   "/:id",
-
+  checkPermission,
   categoriesController.updateCategory
 );
 categoriesRouter.delete(
   "/:id",
-
+  checkPermission,
   categoriesController.deleteCategory
 );
 
