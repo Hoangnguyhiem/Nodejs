@@ -8,7 +8,6 @@ const imageContorller = new ImageContorller();
 
 imagesRouter.post(
   "/clound",
-  checkPermission,
   uploadImage.single("image"),
   imageContorller.uploadSingleImage
 );
