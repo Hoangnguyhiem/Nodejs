@@ -13,9 +13,9 @@ app.use(
 app.use(express.json());
 
 const port = process.env.PORT || 8000;
-// const dbUrl = process.env.DB_URI;
+const dbUrl = process.env.DB_URI;
 
-connectMongoDB("mongodb+srv://vinsomatem97:vinsomatem97@movies.nruegjy.mongodb.net/?retryWrites=true&w=majority&appName=movies");
+connectMongoDB(dbUrl);
 
 app.use("/", router);
 
