@@ -6,7 +6,7 @@ class ImageContorller {
   uploadSingleImage(req, res, next) {
     try {
       if (!req.file) throw new ApiError(404, "No File Upload");
-
+console.log(req.file);
       res.status(StatusCodes.OK).json({
         message: "Upload Ok",
         imageUrl: req.file.path,

@@ -62,6 +62,7 @@ class GenresController {
       if (!genre) throw new ApiError(404, "Genre Not Found");
       res.status(StatusCodes.OK).json({
         message: "Delete Genre Done",
+        data: genre
       });
     } catch (error) {
       next(error);

@@ -27,10 +27,6 @@ const MovieSchema = new Schema(
       ref: "Category",
       require: true,
     },
-    user: {
-      type: Schema.Types.ObjectId,
-      ref: "User",
-    },
     runingTime: {
       type: Number,
     },
@@ -42,10 +38,7 @@ const MovieSchema = new Schema(
     },
     trailer: {
       type: String,
-    },
-    imgBanner: {
-      type: String,
-    },
+    }
   },
   {
     timestamps: true,
