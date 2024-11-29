@@ -3,6 +3,7 @@ import dotenv from "dotenv";
 import router from "./routes/index.js";
 import connectMongoDB from "./config/dbconfig.js";
 import errorHandler from "./middlewares/errorHandler.js";
+import cors from 'cors';
 dotenv.config();
 const app = express();
 app.use(
